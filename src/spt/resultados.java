@@ -60,6 +60,7 @@ public class resultados extends javax.swing.JFrame {
         jLabel60.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel60.setText("Tensión de Toque:");
 
+        jTextField33.setEditable(false);
         jTextField33.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField33ActionPerformed(evt);
@@ -83,6 +84,7 @@ public class resultados extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton1.setText("Graficar");
 
+        jTextField37.setEditable(false);
         jTextField37.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField37ActionPerformed(evt);
@@ -92,6 +94,7 @@ public class resultados extends javax.swing.JFrame {
         jLabel68.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel68.setText("V");
 
+        jTextField34.setEditable(false);
         jTextField34.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField34ActionPerformed(evt);
@@ -101,6 +104,7 @@ public class resultados extends javax.swing.JFrame {
         jLabel65.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel65.setText("V");
 
+        jTextField38.setEditable(false);
         jTextField38.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField38ActionPerformed(evt);
@@ -116,6 +120,7 @@ public class resultados extends javax.swing.JFrame {
         jLabel66.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel66.setText("GPR:");
 
+        jTextField35.setEditable(false);
         jTextField35.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField35ActionPerformed(evt);
@@ -128,6 +133,7 @@ public class resultados extends javax.swing.JFrame {
         jLabel70.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel70.setText("Rg:");
 
+        jTextField36.setEditable(false);
         jTextField36.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField36ActionPerformed(evt);
