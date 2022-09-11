@@ -8,11 +8,47 @@ package spt;
 import java.util.Enumeration;
 import java.util.HashMap;
 import javax.swing.AbstractButton;
+import javax.swing.JOptionPane;
+import java.awt.Graphics;
+import javax.swing.JPanel;
 
 /**
  *
  * @author rodri
  */
+
+class GridsCanvas extends JPanel {
+          int width, height;
+          int rows;
+          int cols;
+
+          GridsCanvas(int w, int h, int r, int c) {
+            setSize(width = w, height = h);
+            rows = r;
+            cols = c;
+          }
+
+          public void paint(Graphics g) {
+            int i;
+            width = getSize().width;
+            height = getSize().height;
+            
+            g.drawLine(0, 0, width-1, 0);
+            g.drawLine(0, height-1, width-1, height-1);
+            g.drawLine(0, 0, 0, height-1);
+            g.drawLine(width-1, 0, width-1, height-1);
+            
+            // draw the rows
+            int rowHt = height / (rows);
+            for (i = 0; i < rows; i++)
+              g.drawLine(0, i * rowHt, width, i * rowHt);
+
+            // draw the columns
+            int rowWid = width / (cols);
+            for (i = 0; i < cols; i++)
+              g.drawLine(i * rowWid, 0, i * rowWid, height);
+          }
+        }
 public class pantallaInicio extends javax.swing.JFrame {
 
     /**
@@ -27,33 +63,33 @@ public class pantallaInicio extends javax.swing.JFrame {
         JTLY.setEditable(false);
         JTLX2.setEditable(false);
         JTLY2.setEditable(false);
-        Double[] array1 = new Double[]{100.0, 0.00393, 234.0, 1083.0, 1.72, 3.42};
+        JTCp.setText("100");
+        Double[] array1 = new Double[]{100.0, 0.00393, 234.0, 1.72, 1083.0, 3.42};
         map.put("Cobre blando estirado", array1);
-        Double[] array2 = new Double[]{97.0, 0.00381, 242.0, 1084.0, 1.78, 3.42};
+        Double[] array2 = new Double[]{97.0, 0.00381, 242.0, 1.78, 1084.0, 3.42};
         map.put("Cobre endurecido", array2);
-        Double[] array3 = new Double[]{61.0, 0.00403, 228.0, 657.0, 2.86, 2.56};
+        Double[] array3 = new Double[]{61.0, 0.00403, 228.0, 2.86, 657.0, 2.56};
         map.put("Aluminio grado EC", array3);
-        Double[] array4 = new Double[]{52.5, 0.00347, 268.0, 654.0, 3.28, 2.6};
+        Double[] array4 = new Double[]{52.5, 0.00347, 268.0, 3.28, 654.0, 2.6};
         map.put("Aleación de Aluminio 6201", array4);
-        map.forEach((key, value) -> JTTipoConductor.addItem(key));
-        Double[] array5 = new Double[]{40.0, 0.00378, 245.0, 1084.0, 4.4, 3.85};
+        map.forEach((key, value) -> JCTipoConductor.addItem(key));
+        Double[] array5 = new Double[]{40.0, 0.00378, 245.0, 4.4, 1084.0, 3.85};
         map.put("Conductor de acero revestido de cobre", array5);
-        Double[] array6 = new Double[]{20.0, 0.00378, 245.0, 1084.0, 8.62, 3.85};
+        Double[] array6 = new Double[]{20.0, 0.00378, 245.0, 8.62, 1084.0, 3.85};
         map.put("Varilla de acero revestida de cobre", array6);
-        Double[] array7 = new Double[]{53.5, 0.00353, 263.0, 652.0, 3.22, 2.6};
+        Double[] array7 = new Double[]{53.5, 0.00353, 263.0, 3.22, 652.0, 2.6};
         map.put("Aleación de Aluminio 5005", array7);
-        Double[] array8 = new Double[]{20.3, 0.0036, 258.0, 657.0, 8.48, 3.58};
+        Double[] array8 = new Double[]{20.3, 0.0036, 258.0, 8.48, 657.0, 3.58};
         map.put("Conductor de acero revestido de aluminio", array8);
-        Double[] array9 = new Double[]{10.8, 0.0016, 605.0, 1510.0, 15.9, 3.28};
+        Double[] array9 = new Double[]{10.8, 0.0016, 605.0, 15.9, 1510.0, 3.28};
         map.put("Acero 1020", array9);
-        Double[] array10 = new Double[]{9.8, 0.0016, 605.0, 1400.0, 17.5, 4.44};
+        Double[] array10 = new Double[]{9.8, 0.0016, 605.0, 17.5, 1400.0, 4.44};
         map.put("Varilla de acero revestido de acero inoxidable", array10);
-        Double[] array11 = new Double[]{8.5, 0.0032, 293.0, 419.0, 20.1, 3.93};
+        Double[] array11 = new Double[]{8.5, 0.0032, 293.0, 20.1, 419.0, 3.93};
         map.put("Varilla de acero galvanizado", array11);
-        Double[] array12 = new Double[]{2.4, 0.0013, 749.0, 1400.0, 72.0, 4.03};
+        Double[] array12 = new Double[]{2.4, 0.0013, 749.0, 72.0, 1400.0, 4.03};
         map.put("Acero inoxidable 304", array12);
         map.forEach((key, value) -> JCTipoElec.addItem(key));
-        
         
     }
 
@@ -99,7 +135,7 @@ public class pantallaInicio extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        JTTipoConductor = new javax.swing.JComboBox<>();
+        JCTipoConductor = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
         JTProfMalla = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
@@ -201,9 +237,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel69 = new javax.swing.JLabel();
         jLabel70 = new javax.swing.JLabel();
         JTXR = new javax.swing.JTextField();
+        jLabel72 = new javax.swing.JLabel();
         jPanel12 = new javax.swing.JPanel();
         jButton14 = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -217,7 +255,6 @@ public class pantallaInicio extends javax.swing.JFrame {
         jMenu5 = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
-        jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem9 = new javax.swing.JMenuItem();
@@ -322,6 +359,11 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         JTLX.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JTLX.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        JTLX.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTLXKeyTyped(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("m");
@@ -331,6 +373,11 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         JTLY.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JTLY.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        JTLY.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTLYKeyTyped(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("m");
@@ -343,6 +390,11 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         JTLX2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JTLX2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        JTLX2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTLX2KeyTyped(evt);
+            }
+        });
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("m");
@@ -352,6 +404,11 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         JTLY2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JTLY2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        JTLY2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTLY2KeyTyped(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel10.setText("m");
@@ -466,10 +523,10 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel13.setText("Tipo:");
 
-        JTTipoConductor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        JTTipoConductor.addActionListener(new java.awt.event.ActionListener() {
+        JCTipoConductor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JCTipoConductor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTTipoConductorActionPerformed(evt);
+                JCTipoConductorActionPerformed(evt);
             }
         });
 
@@ -479,6 +536,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         JTProfMalla.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTProfMallaActionPerformed(evt);
+            }
+        });
+        JTProfMalla.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTProfMallaKeyTyped(evt);
             }
         });
 
@@ -491,9 +553,22 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel17.setText("En dirección X:");
 
+        JTN.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                JTNMouseReleased(evt);
+            }
+        });
         JTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTNActionPerformed(evt);
+            }
+        });
+        JTN.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JTNKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTNKeyTyped(evt);
             }
         });
 
@@ -503,6 +578,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         JTM.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTMActionPerformed(evt);
+            }
+        });
+        JTM.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTMKeyTyped(evt);
             }
         });
 
@@ -608,7 +688,7 @@ public class pantallaInicio extends javax.swing.JFrame {
                                     .addGroup(jPanel4Layout.createSequentialGroup()
                                         .addComponent(jLabel13)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(JTTipoConductor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(JCTipoConductor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(28, 28, 28)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -658,7 +738,7 @@ public class pantallaInicio extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
-                    .addComponent(JTTipoConductor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JCTipoConductor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel17)
                     .addComponent(JTN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -722,6 +802,11 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTDiamElecActionPerformed(evt);
             }
         });
+        JTDiamElec.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTDiamElecKeyTyped(evt);
+            }
+        });
 
         jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -730,6 +815,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         JTLongElec.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTLongElecActionPerformed(evt);
+            }
+        });
+        JTLongElec.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTLongElecKeyTyped(evt);
             }
         });
 
@@ -743,6 +833,7 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         JCDistElec.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JCDistElec.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Por toda el area", "Por el perimetro", "Agrupados en las esquinas", "En el interior", "Sin electrodos" }));
+        JCDistElec.setToolTipText("");
 
         jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel32.setText("Arreglo:");
@@ -917,7 +1008,7 @@ public class pantallaInicio extends javax.swing.JFrame {
                         .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(JTLongElec, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(20, 20, 20)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
@@ -1009,6 +1100,11 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTPSuperfActionPerformed(evt);
             }
         });
+        JTPSuperf.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTPSuperfKeyTyped(evt);
+            }
+        });
 
         jLabel43.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel43.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -1054,6 +1150,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         JTPSup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTPSupActionPerformed(evt);
+            }
+        });
+        JTPSup.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTPSupKeyTyped(evt);
             }
         });
 
@@ -1151,7 +1252,7 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel49.setText("Peso:");
 
         JCPeso.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        JCPeso.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "50 Kg", "70 Kg" }));
+        JCPeso.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "50.0", "70.0" }));
         JCPeso.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JCPesoActionPerformed(evt);
@@ -1168,6 +1269,11 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTTambActionPerformed(evt);
             }
         });
+        JTTamb.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTTambKeyTyped(evt);
+            }
+        });
 
         jLabel51.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel51.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -1181,6 +1287,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         JTFrec.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTFrecActionPerformed(evt);
+            }
+        });
+        JTFrec.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTFrecKeyTyped(evt);
             }
         });
 
@@ -1199,6 +1310,11 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTSfActionPerformed(evt);
             }
         });
+        JTSf.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTSfKeyTyped(evt);
+            }
+        });
 
         jLabel56.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel56.setText("%");
@@ -1206,9 +1322,15 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel57.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel57.setText("Cp:");
 
+        JTCp.setEditable(false);
         JTCp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTCpActionPerformed(evt);
+            }
+        });
+        JTCp.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTCpKeyTyped(evt);
             }
         });
 
@@ -1226,6 +1348,11 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTTfActionPerformed(evt);
             }
         });
+        JTTf.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTTfKeyTyped(evt);
+            }
+        });
 
         jLabel61.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel61.setText("s");
@@ -1238,6 +1365,11 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTTcActionPerformed(evt);
             }
         });
+        JTTc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTTcKeyTyped(evt);
+            }
+        });
 
         jLabel63.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel63.setText("tc:");
@@ -1248,6 +1380,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         JTTs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTTsActionPerformed(evt);
+            }
+        });
+        JTTs.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTTsKeyTyped(evt);
             }
         });
 
@@ -1265,6 +1402,11 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTIo3ActionPerformed(evt);
             }
         });
+        JTIo3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTIo3KeyTyped(evt);
+            }
+        });
 
         jLabel68.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel68.setText("kA");
@@ -1280,6 +1422,15 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JTXRActionPerformed(evt);
             }
         });
+        JTXR.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTXRKeyTyped(evt);
+            }
+        });
+
+        jLabel72.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel72.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel72.setText("Kg");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -1289,20 +1440,23 @@ public class pantallaInicio extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel48, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jLabel49, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(JCPeso, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel53, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(JTTamb, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel51, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel50)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(JTFrec, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel52, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel52, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                            .addComponent(jLabel49, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(JCPeso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel72, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                            .addComponent(JTTamb, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel51, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel59, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1369,7 +1523,8 @@ public class pantallaInicio extends javax.swing.JFrame {
                     .addComponent(jLabel56)
                     .addComponent(jLabel57)
                     .addComponent(JTCp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel58))
+                    .addComponent(jLabel58)
+                    .addComponent(jLabel72, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1432,12 +1587,21 @@ public class pantallaInicio extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(165, 165, 165)
+                .addGap(61, 61, 61)
+                .addComponent(jButton1)
+                .addGap(31, 31, 31)
                 .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(jButton15)
@@ -1449,7 +1613,8 @@ public class pantallaInicio extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -1523,14 +1688,6 @@ public class pantallaInicio extends javax.swing.JFrame {
         jMenu5.add(jMenuItem7);
 
         jMenu2.add(jMenu5);
-
-        jMenuItem11.setText("Resustados de Malla");
-        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem11ActionPerformed(evt);
-            }
-        });
-        jMenu2.add(jMenuItem11);
 
         jMenuItem8.setText("Generar Reporte");
         jMenu2.add(jMenuItem8);
@@ -1713,23 +1870,17 @@ public class pantallaInicio extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
-    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        // TODO add your handling code here:
-        resultados y = new resultados();
-        y.setVisible(true);
-    }//GEN-LAST:event_jMenuItem11ActionPerformed
-
-    private void JTTipoConductorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTTipoConductorActionPerformed
+    private void JCTipoConductorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCTipoConductorActionPerformed
         // TODO add your handling code here:
         //map.get();
-        Double[] lista = map.get(JTTipoConductor.getSelectedItem());
+        Double[] lista = map.get(JCTipoConductor.getSelectedItem());
         C1.setText(lista[0].toString());
         C2.setText(lista[1].toString());
         C3.setText(lista[2].toString());
         C4.setText(lista[3].toString());
         C5.setText(lista[4].toString());
         C6.setText(lista[5].toString());
-    }//GEN-LAST:event_JTTipoConductorActionPerformed
+    }//GEN-LAST:event_JCTipoConductorActionPerformed
 
     private void JTRSuperfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTRSuperfActionPerformed
         // TODO add your handling code here:
@@ -1765,13 +1916,7 @@ public class pantallaInicio extends javax.swing.JFrame {
 
     private void JTNElectrodosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTNElectrodosKeyTyped
         // TODO add your handling code here:
-        char []p = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'};
-        int b = 0;
-        for (int i = 0; i <= 10; i++) {
-        if (p[i]==evt.getKeyChar()){b=1;}
-        }
-        if(b==0){evt.consume(); getToolkit().beep();}
-        
+        validar_entero(evt);
     }//GEN-LAST:event_JTNElectrodosKeyTyped
 
     private void JCMInfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCMInfActionPerformed
@@ -1806,7 +1951,121 @@ public class pantallaInicio extends javax.swing.JFrame {
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
         // TODO add your handling code here:
         ConstruirMalla ();
+        
     }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void JTDiamElecKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTDiamElecKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTDiamElecKeyTyped
+
+    private void JTLongElecKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTLongElecKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTLongElecKeyTyped
+
+    private void JTProfMallaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTProfMallaKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTProfMallaKeyTyped
+
+    private void JTNKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTNKeyTyped
+        // TODO add your handling code here:
+        validar_entero(evt);
+    }//GEN-LAST:event_JTNKeyTyped
+
+    private void JTMKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTMKeyTyped
+        // TODO add your handling code here:
+        validar_entero(evt);
+    }//GEN-LAST:event_JTMKeyTyped
+
+    private void JTLXKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTLXKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTLXKeyTyped
+
+    private void JTLYKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTLYKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTLYKeyTyped
+
+    private void JTLX2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTLX2KeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTLX2KeyTyped
+
+    private void JTLY2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTLY2KeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTLY2KeyTyped
+
+    private void JTPSuperfKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTPSuperfKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTPSuperfKeyTyped
+
+    private void JTPSupKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTPSupKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTPSupKeyTyped
+
+    private void JTTambKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTTambKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTTambKeyTyped
+
+    private void JTFrecKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFrecKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTFrecKeyTyped
+
+    private void JTSfKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTSfKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTSfKeyTyped
+
+    private void JTCpKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTCpKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTCpKeyTyped
+
+    private void JTTfKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTTfKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTTfKeyTyped
+
+    private void JTTcKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTTcKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTTcKeyTyped
+
+    private void JTTsKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTTsKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTTsKeyTyped
+
+    private void JTIo3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTIo3KeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTIo3KeyTyped
+
+    private void JTXRKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTXRKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTXRKeyTyped
+
+    private void JTNKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTNKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JTNKeyReleased
+
+    private void JTNMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTNMouseReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JTNMouseReleased
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        DibujarMalla ();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1837,6 +2096,7 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new pantallaInicio().setVisible(true);
 
@@ -1848,14 +2108,13 @@ public class pantallaInicio extends javax.swing.JFrame {
     public static String SelecTerreno (javax.swing.JComboBox JCTerreno){
     String terreno = (String)JCTerreno.getSelectedItem();
     String a = "";
-        if (terreno.equals ("Suelo organico húmedo")){
-        a="10";
-        } else if (terreno.equals ("Suelo húmedo")){
-        a="100";
-        } else if (terreno.equals ("Suelo seco")){
-        a="1000";
-        } else if (terreno.equals ("Bedrock")){
-        a="10000";
+        switch (terreno) {
+            case "Suelo organico húmedo" -> a="10.0";
+            case "Suelo húmedo" -> a="100.0";
+            case "Suelo seco" -> a="1000.0";
+            case "Bedrock" -> a="10000.0";
+            default -> {
+            }
         }
         return a;
         //entrega el valor de las capas superior e inferior
@@ -1863,59 +2122,53 @@ public class pantallaInicio extends javax.swing.JFrame {
         public static String SelecTerrenoSup (javax.swing.JComboBox JCTerrenoS){
     String terreno = (String)JCTerrenoS.getSelectedItem();
     String a = "";
-        if (terreno.equals ("Concreto")){
-        a="100.0";
-        } else if (terreno.equals ("Granito triturado")){
-        a="1318.7";
-        } else if (terreno.equals ("Piedra caliza limpia")){
-        a="2500.0";
-        } else if (terreno.equals ("Roca triturada")){
-        a="4267.2";
-        }else if (terreno.equals ("Granito limpio similar a la Grava")){
-        a="5000.0";
-        }else if (terreno.equals ("#57 Granito limpio")){
-        a="8106.8";
-        }else if (terreno.equals ("Grava")){
-        a="8534.4";
-        }else if (terreno.equals ("Asfalto")){
-        a="6000000.0";
+        switch (terreno) {
+            case "Concreto" -> a="100.0";
+            case "Granito triturado" -> a="1318.7";
+            case "Piedra caliza limpia" -> a="2500.0";
+            case "Roca triturada" -> a="4267.2";
+            case "Granito limpio similar a la Grava" -> a="5000.0";
+            case "#57 Granito limpio" -> a="8106.8";
+            case "Grava" -> a="8534.4";
+            case "Asfalto" -> a="6000000.0";
+            default -> {
+            }
         }
         return a;
         //devuelve el valor de resistencia de la capa supercifial
     }
-        
         public void acceso1 (){
-        JTLX.setEditable(true);
-        JTLY.setEditable(true);
-        JTLX2.setText("0");
-        JTLX2.setEditable(false);
-        JTLY2.setText("0");
-        JTLY2.setEditable(false);    
+            JTLX.setEditable(true);
+            JTLY.setEditable(true);
+            JTLX2.setText("0");
+            JTLX2.setEditable(false);
+            JTLY2.setText("0");
+            JTLY2.setEditable(false);    
         }//habilita el ingreso de las medidas en funcion de la forma del terreno
         public void acceso2 (){
-        JTLX.setEditable(true);
-        JTLY.setEditable(true);
-        JTLX2.setText("");
-        JTLX2.setEditable(true);
-        JTLY2.setText("");
-        JTLY2.setEditable(true);    
+            JTLX.setEditable(true);
+            JTLY.setEditable(true);
+            JTLX2.setText("");
+            JTLX2.setEditable(true);
+            JTLY2.setText("");
+            JTLY2.setEditable(true);    
         }//habilita el ingreso de las medidas en funcion de la forma del terreno
-        
-        public class Malla {
-            public Dimensiones Dim1;
-            public Conductores Cond1;
-            public Electrodos Elec1;
-            public Terreno Terreno1;
-            public CEstudio CE1;
-            
-            public Malla(Dimensiones dim1, Conductores cond1, Electrodos elec1, Terreno terreno1, CEstudio cE1){
-                this.Dim1 = dim1;
-                this.Cond1 = cond1;
-                this.Elec1 = elec1;
-                this.Terreno1 = terreno1;
-                this.CE1 = cE1;
+        public void validar_entero(java.awt.event.KeyEvent evt){
+            char []p = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+            int b = 0;
+            for (int i = 0; i <= 9; i++) {
+            if (p[i]==evt.getKeyChar()){b=1;}
             }
-        }
+            if(b==0){evt.consume();}
+        }//Valida entrada numerica entero
+        public void validar_decimal(java.awt.event.KeyEvent evt){
+            char []p = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'};
+            int b = 0;
+            for (int i = 0; i <= 10; i++) {
+            if (p[i]==evt.getKeyChar()){b=1;}
+            }
+            if(b==0){evt.consume();}
+        }//Valida entrada numerica decimal
         
         public class Dimensiones{
             public String Forma;
@@ -2035,26 +2288,258 @@ public class pantallaInicio extends javax.swing.JFrame {
                 this.XR = xR;
             }
         }
-        
+        //variables de calculo
+        public double D, ResistP, CsP;
+        public double EtP = 0.0, EpP = 0.0;
+        public double Lt, A, Rg, Ta, Df, Ig, GPR, LC, LR, LM,LP, na, nb, nc, nd, n, Dm1, Dm2, Dm, Ki, Kii, Kh;
+        public double If, Akcmil, dc, Km, Em, Ls, Ks, Es;
+        public String calibre, Mpaso, Mtoque;
+                
         public void ConstruirMalla (){
-            String a="";
-            for (Enumeration<AbstractButton> buttons = buttonGroup1.getElements(); buttons.hasMoreElements();) {
-            AbstractButton button = buttons.nextElement();
-            if (button.isSelected()) {
-                a = button.getText();
-            }
-        }
-            Dimensiones dim2 = new Dimensiones(a, Double.parseDouble(JTLX.getText()), Double.parseDouble(JTLX2.getText()),
-                                                Double.parseDouble(JTLY.getText()), Double.parseDouble(JTLY2.getText()));
-            CteMateriales mat = new CteMateriales(1, 2, 3, 4, 5, 6);
-            Conductores cond = new Conductores("hola", 1, 2, 3, mat);
-          
-            System.out.println(dim2.Forma);
-            System.out.println(dim2.LX);
-            System.out.println(dim2.LY);
-          
+            if (JTLX.getText().length()==0||JTLY.getText().length()==0||JTLX2.getText().length()==0||JTLY2.getText().length()==0
+                ||JTProfMalla.getText().length()==0||JTN.getText().length()==0||JTM.getText().length()==0
+                ||JTNElectrodos.getText().length()==0|JTDiamElec.getText().length()==0||JTLongElec.getText().length()==0
+                ||JTPSuperf.getText().length()==0||JTPSup.getText().length()==0||JTTamb.getText().length()==0
+                ||JTFrec.getText().length()==0||JTSf.getText().length()==0||JTCp.getText().length()==0
+                ||JTTf.getText().length()==0||JTTc.getText().length()==0||JTTs.getText().length()==0||JTIo3.getText().length()==0
+                ||JTXR.getText().length()==0){
+                getToolkit().beep();
+                JOptionPane.showMessageDialog(this, "Debe llenar todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+             }else if (Double.parseDouble(JTLX.getText())<=Double.parseDouble(JTLX2.getText())||
+                       Double.parseDouble(JTLY.getText())<=Double.parseDouble(JTLY2.getText())){
+                JOptionPane.showMessageDialog(this, "Las dimensiones secundarias no pueden ser mayores o iguales a las principales",
+                                              "Error", JOptionPane.ERROR_MESSAGE); 
+             }else{   
+                String a="";
+                for (Enumeration<AbstractButton> buttons = buttonGroup1.getElements(); buttons.hasMoreElements();) {
+                    AbstractButton button = buttons.nextElement();
+                    if (button.isSelected()) {
+                        a = button.getText();
+                        if ("Cuadrada".equals(a)){
+                            JTLY.setText(JTLX.getText());
+                        }
+                    }
+                }
+                if (Integer.parseInt(JTN.getText())<2){
+                    JTN.setText("2");
+                }
+                if (Integer.parseInt(JTM.getText())<2){
+                    JTM.setText("2");
+                }
+                if (Double.parseDouble(JTProfMalla.getText())<0.5){
+                    JOptionPane.showMessageDialog(this, "Se recomienda una profundidad mayor a 0.5m",
+                                                  "Ajustar profundidad de malla", JOptionPane.WARNING_MESSAGE);
+                } else if (Double.parseDouble(JTProfMalla.getText())>1.5){
+                    JOptionPane.showMessageDialog(this, "Se recomienda una profundidad menor a 1.5m",
+                                                  "Ajustar profundidad de malla", JOptionPane.WARNING_MESSAGE);
+                }
+                if (Double.parseDouble(JTPSuperf.getText())<0.1){
+                    JOptionPane.showMessageDialog(this, "Se recomienda una profundidad mayor a 0.1m",
+                                                  "Ajustar profundidad de terreno superficial", JOptionPane.WARNING_MESSAGE);
+                } else if (Double.parseDouble(JTPSuperf.getText())>0.15){
+                    JOptionPane.showMessageDialog(this, "Se recomienda una profundidad menor a 0.15m",
+                                                  "Ajustar profundidad de terreno superficial", JOptionPane.WARNING_MESSAGE);
+                }
+                
+                
+                Dimensiones dimN = new Dimensiones(a, Double.parseDouble(JTLX.getText()), Double.parseDouble(JTLX2.getText()),
+                                                    Double.parseDouble(JTLY.getText()), Double.parseDouble(JTLY2.getText()));
+                CteMateriales matCondN = new CteMateriales(Double.parseDouble(C1.getText()), Double.parseDouble(C2.getText()),
+                                                          Double.parseDouble(C3.getText()), Double.parseDouble(C4.getText()),
+                                                          Double.parseDouble(C5.getText()), Double.parseDouble(C6.getText()));
+                Conductores condN = new Conductores(JCTipoConductor.getSelectedItem().toString(),
+                                                    Double.parseDouble(JTProfMalla.getText()),Integer.parseInt(JTM.getText()),
+                                                    Integer.parseInt(JTN.getText()), matCondN);
+                CteMateriales matElecN = new CteMateriales(Double.parseDouble(C11.getText()), Double.parseDouble(C22.getText()),
+                                                          Double.parseDouble(C33.getText()), Double.parseDouble(C44.getText()),
+                                                          Double.parseDouble(C55.getText()), Double.parseDouble(C66.getText()));
+                Electrodos elecN = new Electrodos (Integer.parseInt(JTNElectrodos.getText()), Double.parseDouble(JTDiamElec.getText()),
+                                                   Double.parseDouble(JTLongElec.getText()), JCTipoElec.getSelectedItem().toString(),
+                                                   JCDistElec.getSelectedItem().toString(),matElecN);
+                Terreno terN = new Terreno (Double.parseDouble(JTRSuperf.getText()), JCMSuperf.getSelectedItem().toString(),
+                                            Double.parseDouble(JTPSuperf.getText()), Double.parseDouble(JTRSup.getText()),
+                                            JCMSup.getSelectedItem().toString(), Double.parseDouble(JTPSup.getText()),
+                                            Double.parseDouble(JTRInf.getText()),  JCMInf.getSelectedItem().toString());
+                CEstudio cEstN = new CEstudio(Double.parseDouble(JCPeso.getSelectedItem().toString()),
+                                              Double.parseDouble(JTTamb.getText()), Double.parseDouble(JTFrec.getText()),
+                                              Double.parseDouble(JTSf.getText()), Double.parseDouble(JTCp.getText()), 
+                                              Double.parseDouble(JTTf.getText()), Double.parseDouble(JTTc.getText()),
+                                              Double.parseDouble(JTTs.getText()), Double.parseDouble(JTIo3.getText()), 
+                                              Double.parseDouble(JTXR.getText()));
+
+                //Calculos de parametros
+                D = ((dimN.LX/(condN.M-1))+(dimN.LY/(condN.N-1)))/2.0;
+                if (D<3.0){
+                JOptionPane.showMessageDialog(this, "Se recomienda aumentar el distanciamiento entre conductores a más de 3m",
+                                              "Ajustar distanciamiento entre conductores", JOptionPane.WARNING_MESSAGE);
+                }
+                if (D>15.0){
+                JOptionPane.showMessageDialog(this, "Se recomienda disminuir el distanciamiento entre conductores a menos de 15m",
+                                              "Ajustar distanciamiento entre conductores", JOptionPane.WARNING_MESSAGE);
+                }
+                ResistP = (terN.RSup*terN.RInf*elecN.LongElec)/((terN.RInf*(terN.PSup-condN.ProfMalla))+
+                          (terN.RSup*(elecN.LongElec+condN.ProfMalla-terN.PSup)));//da error si las capas son iguales 0/0
+                CsP = 1-(0.09*(1-ResistP/terN.RSuperf))/(2*terN.PSuperf+0.09);
+                if (cEstN.Peso==50.0){
+                    EpP = (1000+6.0*CsP*terN.RSuperf)*(0.116/(Math.sqrt(cEstN.Ts)));
+                    EtP = (1000+1.5*CsP*terN.RSuperf)*(0.116/(Math.sqrt(cEstN.Ts)));
+                } else if (cEstN.Peso==70.0){
+                    EpP = (1000+6.0*CsP*terN.RSuperf)*(0.157/(Math.sqrt(cEstN.Ts)));
+                    EtP = (1000+1.5*CsP*terN.RSuperf)*(0.157/(Math.sqrt(cEstN.Ts)));
+                }
+                Lt= condN.N*dimN.LX + condN.M*dimN.LY + elecN.NElectrodos*elecN.LongElec;
+                //Calculo de area
+                if (!"Forma T".equals(dimN.Forma)){
+                A = (dimN.LX*dimN.LY)-(dimN.LX2*dimN.LY2);
+                }else{
+                A = (dimN.LX*dimN.LY)-(2.0*(dimN.LX2*dimN.LY2));
+                }
+                Rg = ResistP*((1.0/Lt) + (1.0/(Math.sqrt(20*A)))*(1.0 + (1.0/(1.0+condN.ProfMalla*Math.sqrt(20.0/A)))));
+                Ta = cEstN.XR*(1.0/(2.0*Math.PI*cEstN.Frec));
+                Df = Math.sqrt(1+((Ta/cEstN.Tf)*(1-Math.exp((-2.0*cEstN.Tf)/Ta))));
+                Ig = Df*(cEstN.Sf/100)*(cEstN.Io3*1000); //revisar
+                GPR = Rg*Ig;
+                if (GPR<EtP){
+                    System.out.println("tension tolerable");
+                }else{
+                    System.out.println("Calcular tensiones reales");
+                }
+                LC = condN.N*dimN.LX+condN.M*dimN.LY;
+                LR = elecN.NElectrodos*elecN.LongElec;
+                if ("En el interior".equals(elecN.DistElec)||"Sin electrodos".equals(elecN.DistElec)){
+                    LM = LC+LR;
+                }else{
+                    LM = LC + (1.55 + (1.22*(elecN.LongElec/(Math.sqrt(Math.pow(dimN.LX, 2)+Math.pow(dimN.LY, 2))))))*LR;
+                }
+                LP = (2*dimN.LX)+(2*dimN.LY); //perimetro de la malla
+                na = 2.0*(LC/LP);
+                nb = Math.sqrt(LP/(4*Math.sqrt(A)));
+                nc = Math.pow((dimN.LX*dimN.LY)/A, (0.7*A)/(dimN.LX*dimN.LY));
+                Dm1 = Math.sqrt(Math.pow(dimN.LX, 2)+Math.pow(dimN.LY-dimN.LY2, 2));
+                Dm2 = Math.sqrt(Math.pow(dimN.LY, 2)+Math.pow(dimN.LX-dimN.LX2, 2));
+                if (Dm1>Dm2){
+                    Dm = Dm1;// fija el valor mayor
+                }else{
+                    Dm = Dm2;
+                }
+                nd = Dm/(Math.sqrt(Math.pow(dimN.LX, 2)+Math.pow(dimN.LY, 2)));
+                if (null == dimN.Forma){
+                    n=na*nb*nc*nd;
+                }else n = switch (dimN.Forma) {
+                    case "Cuadrada" -> na;
+                    case "Rectangular" -> na*nb;
+                    case "Forma L" -> na*nb*nc;
+                    default -> na*nb*nc*nd;
+                };
+                Ki=0.644+(0.148*n);
+                if("En el interior".equals(elecN.DistElec)||"Sin electrodos".equals(elecN.DistElec)){
+                    Kii=1/(Math.pow((2*n), (2/n)));
+                }else{
+                    Kii=1;
+                }
+                Kh = Math.sqrt(1+condN.ProfMalla);
+                If = (Df*cEstN.Io3);
+                Akcmil = (If*197.4)/Math.sqrt((condN.CteMC.TCAP/(cEstN.Tc*condN.CteMC.Far*condN.CteMC.Resist))
+                          *Math.log((condN.CteMC.Fko+condN.CteMC.TempF)/(condN.CteMC.Fko+cEstN.Tamb)));
+                if (Akcmil>400){
+                    calibre = "500";
+                    dc = 0.0187;
+                }else if (Akcmil>350 && Akcmil<=400){
+                    calibre = "400";
+                    dc = 0.0167;
+                }else if (Akcmil>300 && Akcmil<=350){
+                    calibre = "350";
+                    dc = 0.0157;
+                }else if (Akcmil>250 && Akcmil<=300){
+                    calibre = "300";
+                    dc = 0.0139;
+                }else if (Akcmil>211.6 && Akcmil<=250){
+                    calibre = "250";
+                    dc = 0.0127;
+                }else if (Akcmil>167.8064 && Akcmil<=211.6){
+                    calibre = "4/0";
+                    dc = 0.0117;
+                }else if (Akcmil>133.0717 && Akcmil<=167.8064){
+                    calibre = "3/0";
+                    dc = 0.0104;
+                }else{
+                    calibre = "2/0";
+                    dc = 0.0093;
+                }
+                Km = (1.0/(2.0*Math.PI))*(Math.log((Math.pow(D, 2)/(16.0*condN.ProfMalla*dc))+
+                        (Math.pow(D+2*condN.ProfMalla, 2)/(8.0*D*dc))-(condN.ProfMalla/(4.0*dc)))+
+                        ((Kii/Kh)*(Math.log(8.0/(Math.PI*(2*n-1))))));
+                Em = (ResistP*Km*Ki*Ig)/LM;
+                Ls = (0.75*LC)+(0.85*elecN.NElectrodos*elecN.LongElec);
+                Ks = (1.0/Math.PI)*((1.0/(2.0*condN.ProfMalla))+(1.0/(D+condN.ProfMalla))+((1.0/D)*(1-Math.pow(0.5, n-2))));
+                Es = (ResistP*Ks*Ki*Ig)/Ls;
+                System.out.println("Distanciamiento cond: "+D);
+                System.out.println(ResistP);
+                System.out.println(terN.RSuperf);
+                System.out.println(terN.PSuperf);
+                System.out.println(CsP);
+                System.out.println("Tension de paso peritida: "+EpP);
+                System.out.println("Tension de toque permitida: "+EtP);
+                System.out.println("Lt: "+Lt);
+                System.out.println("A: "+A);
+                System.out.println("Rg: "+Rg);
+                System.out.println("Ta: "+Ta);
+                System.out.println("Df: "+Df);
+                System.out.println("Ig: "+Ig);
+                System.out.println("GPR: "+GPR);
+                System.out.println("LM: "+LM);
+                System.out.println("n: "+n);
+                System.out.println("Ki: "+Ki);
+                System.out.println("Kii: "+Kii);
+                System.out.println("Kh: "+Kh);
+                System.out.println("Ks: "+Ks);
+                System.out.println("Km: "+Km);
+                System.out.println("kcmil: "+Akcmil);
+                System.out.println("Calibre: "+calibre); 
+                System.out.println("Em: "+Em);
+                System.out.println("Es: "+Es);
+                if (Em>EtP){
+                    System.out.println("Exede el valor permitido de tension de toque");
+                    Mtoque="La tension de toque supera el limite máximo";
+                } else{
+                    System.out.println("La tension de toque no supera el limite máximo");
+                    Mtoque="La tension de toque no supera el limite máximo";
+                }
+                if (Es>EpP){
+                    System.out.println("Exede el valor permitido de tension de paso");
+                    Mpaso="La tension de paso supera el limite máximo";
+                }else{
+                    System.out.println("La tension de paso no supera el limite máximo");
+                    Mpaso="La tension de paso no supera el limite máximo";
+                }
+                new resultados().setVisible(true);
+                Em=Math.rint(Em*1000)/1000;
+                resultados.JTEm.setText(""+Em);
+                Es=Math.rint(Es*1000)/1000;
+                resultados.JTEs.setText(""+Es);
+                EtP=Math.rint(EtP*1000)/1000;
+                resultados.JTEt.setText(""+EtP);
+                EpP=Math.rint(EpP*1000)/1000;
+                resultados.JTEp.setText(""+EpP);
+                GPR=Math.rint(GPR*1000)/1000;
+                resultados.JTGPR.setText(""+GPR);
+                Rg=Math.rint(Rg*1000)/1000;
+                resultados.JTRg.setText(""+Rg);
+                resultados.JLpaso.setText(Mpaso);
+                resultados.JLtoque.setText(Mtoque);
+                
+        } 
         }
         
+        public void DibujarMalla (){
+            jPanel1.removeAll();
+            jPanel1.revalidate();
+            GridsCanvas Mallado = new GridsCanvas (jPanel1.getWidth()-1, jPanel1.getHeight()-1, 
+                    Integer.parseInt(JTN.getText())-1, Integer.parseInt(JTM.getText())-1);
+//            jPanel1.setLayout(null);
+            jPanel1.add(Mallado);
+            jPanel1.repaint();
+        }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField C1;
     private javax.swing.JTextField C11;
@@ -2073,6 +2558,7 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> JCMSup;
     private javax.swing.JComboBox<String> JCMSuperf;
     private javax.swing.JComboBox<String> JCPeso;
+    private javax.swing.JComboBox<String> JCTipoConductor;
     private javax.swing.JComboBox<String> JCTipoElec;
     private javax.swing.JRadioButton JRBCuadrada;
     private javax.swing.JRadioButton JRBFormaL;
@@ -2100,10 +2586,10 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JTextField JTTamb;
     private javax.swing.JTextField JTTc;
     private javax.swing.JTextField JTTf;
-    private javax.swing.JComboBox<String> JTTipoConductor;
     private javax.swing.JTextField JTTs;
     private javax.swing.JTextField JTXR;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
     private javax.swing.JLabel jLabel1;
@@ -2175,6 +2661,7 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel70;
     private javax.swing.JLabel jLabel71;
+    private javax.swing.JLabel jLabel72;
     private javax.swing.JLabel jLabel73;
     private javax.swing.JLabel jLabel74;
     private javax.swing.JLabel jLabel75;
@@ -2190,7 +2677,6 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
-    private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
