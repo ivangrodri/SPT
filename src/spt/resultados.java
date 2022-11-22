@@ -54,6 +54,10 @@ public class resultados extends javax.swing.JFrame {
         JLpaso = new javax.swing.JLabel();
         JLtoque = new javax.swing.JLabel();
 
+        setAlwaysOnTop(true);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
+
         jLabel48.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel48.setText("Resultados de Diseño");
 
@@ -323,6 +327,7 @@ public class resultados extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
@@ -355,7 +360,6 @@ public class resultados extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new resultados().setVisible(true);
             }
         });
     }

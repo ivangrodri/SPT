@@ -11,6 +11,13 @@ import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import java.awt.Graphics;
 import javax.swing.JPanel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import com.google.gson.Gson;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -21,34 +28,150 @@ class GridsCanvas extends JPanel {
           int width, height;
           int rows;
           int cols;
-
-          GridsCanvas(int w, int h, int r, int c) {
+          String form, AElec;
+          double longx, longy, longx2, longy2;
+          GridsCanvas(String f, int w, int h, int r, int c, double x, double y, double x2, double y2, String DElec) {
             setSize(width = w, height = h);
             rows = r;
             cols = c;
+            form = f;
+            longx = x;
+            longy = y;
+            longx2 = x2;
+            longy2 = y2;
+            AElec = DElec;
           }
 
           public void paint(Graphics g) {
             int i;
-            width = getSize().width;
-            height = getSize().height;
-            
-            g.drawLine(0, 0, width-1, 0);
-            g.drawLine(0, height-1, width-1, height-1);
-            g.drawLine(0, 0, 0, height-1);
-            g.drawLine(width-1, 0, width-1, height-1);
-            
-            // draw the rows
-            int rowHt = height / (rows);
-            for (i = 0; i < rows; i++)
-              g.drawLine(0, i * rowHt, width, i * rowHt);
-
-            // draw the columns
-            int rowWid = width / (cols);
-            for (i = 0; i < cols; i++)
-              g.drawLine(i * rowWid, 0, i * rowWid, height);
+            width = getSize().width-1;
+            height = getSize().height-1;
+            if ("Cuadrada".equals(form)||"Rectangular".equals(form)) {
+                        int height2, height3, width2;
+                          height2 = (int) Math.round((longy/longx)*height);
+                          height3 = (int) Math.round((height-height2)/2); 
+                          int rowHt = height2 / (rows);
+                          int rowWid = width / (cols);
+                          width2 = (width-rowWid*cols)/2;
+                          // dibujando las filas
+                          for (i = 0; i <= rows; i++){
+                          g.drawLine(width2, (i * rowHt)+height3, (rowWid*cols)+width2, (i * rowHt)+height3);
+                          }           
+                          // dibujando las columnas
+                          for (i = 0; i <= cols; i++){
+                          g.drawLine((i * rowWid)+width2, height3, (i * rowWid)+width2, (rowHt*rows)+height3);
+                          }
+                        //dubujar electrodos
+                        if ("Agrupados en las esquinas".equals(AElec)){
+                            g.fillOval(width2-3, height3-3, 6, 6);
+                            g.fillOval((rowWid*cols)+width2-3, height3-3, 6, 6);
+                            g.fillOval(width2-3, (rowHt*rows)+height3-3, 6, 6);
+                            g.fillOval((rowWid*cols)+width2-3, (rowHt*rows)+height3-3, 6, 6);
+                        }
+            }else{
+                      int height2, height3, width2, width3, h, w, h2, difh, w2, difw;
+                      if (longx>longy){
+                          height2 = (int) Math.round((longy/longx)*height);
+                          height3 = (int) Math.round((height-height2)/2);
+                          width2 = width;
+                          width3 = 0;
+                          h = (int) Math.round((longy2/longx)*height);
+                          if ("Forma L".equals(form)){
+                          w = (int) Math.round(((longx-longx2)/longx)*height);
+                          }else{
+                          w = (int) Math.round((longx2/longx)*height);
+                          } 
+                      }else {
+                          width2 = (int) Math.round((longx/longy)*width);
+                          width3 = (int) Math.round((width-width2)/2);
+                          height2 = height;
+                          height3 = 0;
+                          h = (int) Math.round((longy2/longy)*width);
+                          if ("Forma L".equals(form)){
+                          w = (int) Math.round(((longx-longx2)/longy)*width);
+                          }else{
+                          w = (int) Math.round((longx2/longy)*width);
+                          }
+                      }          
+                      int rowHt = height2 / (rows); //rowHt*rows
+                      int rowWid = width2 / (cols); //rowWid*cols
+                      //ajustando el valor de tope de las columna
+                      difh = Math.abs((rowHt)-h);
+                      h2 = rowHt;
+                      for (i = 0; i <= rows; i++){
+                      if (Math.abs((rowHt*i)-h)<difh){
+                      difh = Math.abs((rowHt*i)-h);
+                      h2 = rowHt*i;
+                      }
+                      }
+                      //ajustando el valor de tope de las fila
+                      difw = Math.abs((rowWid)-w);
+                      w2 = rowWid;
+                      for (i = 0; i <= cols; i++){
+                      if (Math.abs((rowWid*i)-w)<difw){
+                      difw = Math.abs((rowWid*i)-w);
+                      w2 = rowWid*i;    
+                      }
+                      }
+                     if ("Forma L".equals(form)){
+                      // dibujando las filas
+                      for (i = 0; i <= rows; i++){
+                          if ((i * rowHt)<h2){
+                          g.drawLine(width3, (i * rowHt)+height3, w2+width3, (i * rowHt)+height3);
+                          }else{
+                          g.drawLine(width3, (i * rowHt)+height3, (rowWid*cols)+width3, (i * rowHt)+height3);
+                          }
+                      }             
+                      // dibujando las columnas
+                      for (i = 0; i <= cols; i++){
+                          if ((i * rowWid)<=w2){
+                          g.drawLine((i * rowWid)+width3, height3, (i * rowWid)+width3, (rowHt*rows)+height3);
+                          }else{
+                          g.drawLine((i * rowWid)+width3, h2+height3, (i * rowWid)+width3, (rowHt*rows)+height3);
+                          }
+                      }
+                      //dubujar electrodos
+                        if ("Agrupados en las esquinas".equals(AElec)){
+                            g.fillOval(width3-3, height3-3, 6, 6);
+                            g.fillOval(w2-3, height3-3, 6, 6);
+                            g.fillOval(width3-3, (rowHt*rows)+height3-3, 6, 6);
+                            g.fillOval(width3+w2-3, height3+h2-3, 6, 6);
+                            g.fillOval((rowWid*cols)+width3-3, height3+h2-3, 6, 6);
+                            g.fillOval((rowWid*cols)+width3-3, (rowHt*rows)+height3-3, 6, 6);
+                        }
+                      //Forma T
+                  }else{
+                    // dibujando las filas
+                      for (i = 0; i <= rows; i++){
+                          if ((i * rowHt)<=((rowHt*rows)-h2)){
+                          g.drawLine(width3, (i * rowHt)+height3, (rowWid*cols)+width3, (i * rowHt)+height3);
+                          }else{
+                          g.drawLine(width3+w2, (i * rowHt)+height3, (rowWid*cols)-w2+width3, (i * rowHt)+height3);
+                          }
+                      }
+                    // dibujando las columnas
+                      for (i = 0; i <= cols; i++){
+                          if ((i * rowWid)<w2||(i * rowWid)>((rowWid*cols)-w2)){
+                          g.drawLine((i * rowWid)+width3, height3, (i * rowWid)+width3, (rowHt*rows)-h2+height3);
+                          }else{
+                          g.drawLine((i * rowWid)+width3, height3, (i * rowWid)+width3, (rowHt*rows)+height3);
+                          }
+                      }
+                    //dubujar electrodos
+                    if ("Agrupados en las esquinas".equals(AElec)){
+                        g.fillOval(width3-3, height3-3, 6, 6);
+                        g.fillOval((rowWid*cols)+width3-3, height3-3, 6, 6);
+                        g.fillOval(width3-3, (rowHt*rows)-h2+height3-3, 6, 6);
+                        g.fillOval((rowWid*cols)+width3-3, (rowHt*rows)-h2+height3-3, 6, 6);
+                        g.fillOval(w2-3, (rowHt*rows)-h2+height3-3, 6, 6);
+                        g.fillOval((rowWid*cols)-w2-3, (rowHt*rows)-h2+height3-3, 6, 6);
+                        g.fillOval(w2-3, (rowHt*rows)+height3-3, 6, 6);
+                        g.fillOval((rowWid*cols)-w2-3, (rowHt*rows)+height3-3, 6, 6);
+                    }  
+                  }
+                }
+              } 
           }
-        }
 public class pantallaInicio extends javax.swing.JFrame {
 
     /**
@@ -57,8 +180,6 @@ public class pantallaInicio extends javax.swing.JFrame {
     public pantallaInicio() {
         initComponents();                     
         JTRSuperf.setText(SelecTerrenoSup(JCMSuperf));
-        JTRSup.setText(SelecTerreno(JCMSup));
-        JTRInf.setText(SelecTerreno(JCMInf));
         JTLX.setEditable(false);
         JTLY.setEditable(false);
         JTLX2.setEditable(false);
@@ -159,17 +280,17 @@ public class pantallaInicio extends javax.swing.JFrame {
         C3 = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jLabel26 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
+        JLNElectrodos = new javax.swing.JLabel();
         JTNElectrodos = new javax.swing.JTextField();
-        jLabel28 = new javax.swing.JLabel();
+        JLDiamElec = new javax.swing.JLabel();
         JTDiamElec = new javax.swing.JTextField();
-        jLabel29 = new javax.swing.JLabel();
+        JLLongElec = new javax.swing.JLabel();
         JTLongElec = new javax.swing.JTextField();
-        jLabel30 = new javax.swing.JLabel();
-        jLabel31 = new javax.swing.JLabel();
+        JLDiamElec2 = new javax.swing.JLabel();
+        JLLongElec2 = new javax.swing.JLabel();
         JCDistElec = new javax.swing.JComboBox<>();
         jLabel32 = new javax.swing.JLabel();
-        jLabel33 = new javax.swing.JLabel();
+        JLTipoE = new javax.swing.JLabel();
         JCTipoElec = new javax.swing.JComboBox<>();
         jLabel34 = new javax.swing.JLabel();
         jLabel35 = new javax.swing.JLabel();
@@ -185,24 +306,19 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel40 = new javax.swing.JLabel();
         C44 = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
-        jLabel41 = new javax.swing.JLabel();
-        jLabel42 = new javax.swing.JLabel();
         jLabel45 = new javax.swing.JLabel();
         jLabel46 = new javax.swing.JLabel();
         jLabel47 = new javax.swing.JLabel();
         JCMSuperf = new javax.swing.JComboBox<>();
-        jLabel71 = new javax.swing.JLabel();
         jLabel77 = new javax.swing.JLabel();
         jLabel78 = new javax.swing.JLabel();
         JTRSuperf = new javax.swing.JTextField();
         JTPSuperf = new javax.swing.JTextField();
         jLabel43 = new javax.swing.JLabel();
-        JTRSup = new javax.swing.JTextField();
-        JCMSup = new javax.swing.JComboBox<>();
-        jLabel44 = new javax.swing.JLabel();
-        JTRInf = new javax.swing.JTextField();
-        JCMInf = new javax.swing.JComboBox<>();
-        JTPSup = new javax.swing.JTextField();
+        JTRProm = new javax.swing.JTextField();
+        jLabel80 = new javax.swing.JLabel();
+        jLabel71 = new javax.swing.JLabel();
+        jLabel81 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jLabel48 = new javax.swing.JLabel();
         jLabel49 = new javax.swing.JLabel();
@@ -241,9 +357,15 @@ public class pantallaInicio extends javax.swing.JFrame {
         jPanel12 = new javax.swing.JPanel();
         jButton14 = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        JLVista = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel41 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -262,6 +384,9 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
+
+        jTabbedPane1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         buttonGroup1.add(JRBCuadrada);
         JRBCuadrada.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -359,6 +484,11 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         JTLX.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JTLX.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        JTLX.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JTLXActionPerformed(evt);
+            }
+        });
         JTLX.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 JTLXKeyTyped(evt);
@@ -524,6 +654,7 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel13.setText("Tipo:");
 
         JCTipoConductor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JCTipoConductor.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         JCTipoConductor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JCTipoConductorActionPerformed(evt);
@@ -778,10 +909,11 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel26.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel26.setText("Cantidad y Material de Electrodos");
 
-        jLabel27.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel27.setText("N° de Electrodos:");
+        JLNElectrodos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JLNElectrodos.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        JLNElectrodos.setText("N° de Electrodos:");
 
+        JTNElectrodos.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         JTNElectrodos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTNElectrodosActionPerformed(evt);
@@ -793,10 +925,11 @@ public class pantallaInicio extends javax.swing.JFrame {
             }
         });
 
-        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel28.setText("Diámetro:");
+        JLDiamElec.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JLDiamElec.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        JLDiamElec.setText("Diámetro:");
 
+        JTDiamElec.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         JTDiamElec.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTDiamElecActionPerformed(evt);
@@ -808,10 +941,11 @@ public class pantallaInicio extends javax.swing.JFrame {
             }
         });
 
-        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel29.setText("Longitud:");
+        JLLongElec.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JLLongElec.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        JLLongElec.setText("Longitud:");
 
+        JTLongElec.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         JTLongElec.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTLongElecActionPerformed(evt);
@@ -823,23 +957,28 @@ public class pantallaInicio extends javax.swing.JFrame {
             }
         });
 
-        jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel30.setText("cm");
+        JLDiamElec2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JLDiamElec2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        JLDiamElec2.setText("cm");
 
-        jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel31.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel31.setText("m");
+        JLLongElec2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JLLongElec2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        JLLongElec2.setText("m");
 
         JCDistElec.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JCDistElec.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Por toda el area", "Por el perimetro", "Agrupados en las esquinas", "En el interior", "Sin electrodos" }));
         JCDistElec.setToolTipText("");
+        JCDistElec.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JCDistElecActionPerformed(evt);
+            }
+        });
 
         jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel32.setText("Arreglo:");
 
-        jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel33.setText("Tipo:");
+        JLTipoE.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        JLTipoE.setText("Tipo:");
 
         JCTipoElec.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         JCTipoElec.addActionListener(new java.awt.event.ActionListener() {
@@ -937,28 +1076,28 @@ public class pantallaInicio extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addComponent(jLabel27)
+                        .addComponent(JLNElectrodos)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(JTNElectrodos, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(JLDiamElec, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(JTDiamElec, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel30)
+                        .addComponent(JLDiamElec2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(JLLongElec, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(JTLongElec, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel31)
+                        .addComponent(JLLongElec2)
                         .addContainerGap(93, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(JLTipoE, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(JCTipoElec, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -999,21 +1138,21 @@ public class pantallaInicio extends javax.swing.JFrame {
                 .addComponent(jLabel26)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel27, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(JLNElectrodos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(JTNElectrodos, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(JLDiamElec, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(JTDiamElec, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(JLDiamElec2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(JLLongElec, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(JTLongElec, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(JLLongElec2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(20, 20, 20)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(34, 34, 34)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel33)
+                            .addComponent(JLTipoE)
                             .addComponent(JCTipoElec, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel32)
@@ -1045,23 +1184,16 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Electrodos", jPanel5);
 
-        jLabel41.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel41.setText("Editor de Suelo");
-
-        jLabel42.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel42.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel42.setText("Superficie");
-
         jLabel45.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel45.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel45.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel45.setText("Resistividad");
 
         jLabel46.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel46.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel46.setText("Material");
+        jLabel46.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel46.setText("Material Superficial");
 
         jLabel47.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel47.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel47.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel47.setText("Profundidad");
 
         JCMSuperf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -1071,10 +1203,6 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JCMSuperfActionPerformed(evt);
             }
         });
-
-        jLabel71.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel71.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel71.setText("Caracteristicas");
 
         jLabel77.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel77.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1108,55 +1236,32 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         jLabel43.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel43.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel43.setText("Capa Superior");
+        jLabel43.setText("Resistividad Promedio");
 
-        JTRSup.setEditable(false);
-        JTRSup.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        JTRSup.addActionListener(new java.awt.event.ActionListener() {
+        JTRProm.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        JTRProm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTRSupActionPerformed(evt);
+                JTRPromActionPerformed(evt);
             }
         });
-
-        JCMSup.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        JCMSup.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Suelo organico húmedo", "Suelo húmedo", "Suelo seco", "Bedrock" }));
-        JCMSup.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JCMSupActionPerformed(evt);
-            }
-        });
-
-        jLabel44.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel44.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel44.setText("Capa Inferior");
-
-        JTRInf.setEditable(false);
-        JTRInf.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        JTRInf.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTRInfActionPerformed(evt);
-            }
-        });
-
-        JCMInf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        JCMInf.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Suelo organico húmedo", "Suelo húmedo", "Suelo seco", "Bedrock" }));
-        JCMInf.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JCMInfActionPerformed(evt);
-            }
-        });
-
-        JTPSup.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        JTPSup.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTPSupActionPerformed(evt);
-            }
-        });
-        JTPSup.addKeyListener(new java.awt.event.KeyAdapter() {
+        JTRProm.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                JTPSupKeyTyped(evt);
+                JTRPromKeyTyped(evt);
             }
         });
+
+        jLabel80.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel80.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel80.setText("Ohm-m");
+        jLabel80.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        jLabel71.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel71.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel71.setText("Superficie:");
+
+        jLabel81.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel81.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel81.setText("Suelo:");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -1165,81 +1270,60 @@ public class pantallaInicio extends javax.swing.JFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel41, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel81, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(jPanel6Layout.createSequentialGroup()
-                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jLabel42, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel71, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(jPanel6Layout.createSequentialGroup()
-                                            .addGap(4, 4, 4)
-                                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(jLabel45, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jLabel77, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(JTRSup, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(JTRSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                .addComponent(JTRInf, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel44, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel43, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel43, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(JTRProm, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel80, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel71, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel46, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(JCMSuperf, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(JCMSup, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(JCMInf, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel45, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2)
+                                .addComponent(JTRSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel77)
+                                .addGap(38, 38, 38)
+                                .addComponent(jLabel47, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(JTPSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel46, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(JCMSuperf, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(JTPSuperf, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel78, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel47, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(JTPSup))))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addComponent(jLabel78, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(87, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel41)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel47, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel78, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel45, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel77))
-                    .addComponent(jLabel46, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel71, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel71, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel42, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel46, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JCMSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel45, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(JTRSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(JCMSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(JTPSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel77)
+                        .addComponent(jLabel47, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(JTPSuperf, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel78)))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel43, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(JTRSup, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(JCMSup, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(JTPSup, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel44, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(JCMInf, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(JTRInf, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(132, Short.MAX_VALUE))
+                .addComponent(jLabel81, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel43, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JTRProm, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel80))
+                .addContainerGap(147, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Terreno", jPanel6);
@@ -1412,7 +1496,7 @@ public class pantallaInicio extends javax.swing.JFrame {
         jLabel68.setText("kA");
 
         jLabel69.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel69.setText("(Corriente de falla simetrca)");
+        jLabel69.setText("(Corriente de falla simetrica)");
 
         jLabel70.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel70.setText("Relacion X/R:");
@@ -1580,17 +1664,10 @@ public class pantallaInicio extends javax.swing.JFrame {
         });
 
         jButton15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jButton15.setText("Cancelar");
+        jButton15.setText("Limpiar");
         jButton15.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton15ActionPerformed(evt);
-            }
-        });
-
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
             }
         });
 
@@ -1599,9 +1676,7 @@ public class pantallaInicio extends javax.swing.JFrame {
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(61, 61, 61)
-                .addComponent(jButton1)
-                .addGap(31, 31, 31)
+                .addGap(165, 165, 165)
                 .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(jButton15)
@@ -1613,31 +1688,76 @@ public class pantallaInicio extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton14, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(197, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 254, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 239, Short.MAX_VALUE)
-        );
+        jPanel2.setPreferredSize(new java.awt.Dimension(300, 300));
+
+        JLVista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/t1.png"))); // NOI18N
+
+        jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel27.setText("0.00");
+
+        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel28.setText("--.---");
+
+        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel29.setText("--.---");
+
+        jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel30.setText("--.---");
+
+        jLabel31.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel31.setText("m");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(JLVista)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel28, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                    .addComponent(jLabel27, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel29, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel31, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel30, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(10, 10, 10))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(JLVista)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jLabel31)
+                .addGap(6, 6, 6)
+                .addComponent(jLabel28)
+                .addGap(6, 6, 6)
+                .addComponent(jLabel27)
+                .addGap(25, 25, 25)
+                .addComponent(jLabel29)
+                .addGap(135, 135, 135)
+                .addComponent(jLabel30)
+                .addContainerGap())
+        );
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(300, 300));
+
+        jLabel41.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logo.png"))); // NOI18N
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel41, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel41, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jMenu1.setText("Archivo");
@@ -1648,10 +1768,12 @@ public class pantallaInicio extends javax.swing.JFrame {
         });
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/inuevo.png"))); // NOI18N
         jMenuItem1.setText("Nuevo Proyecto");
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/iabrir.png"))); // NOI18N
         jMenuItem2.setText("Abrir Proyecto");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1661,9 +1783,17 @@ public class pantallaInicio extends javax.swing.JFrame {
         jMenu1.add(jMenuItem2);
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/iguardar.png"))); // NOI18N
         jMenuItem3.setText("Guardar Proyecto");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem3);
 
+        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        jMenuItem4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/isalir.png"))); // NOI18N
         jMenuItem4.setText("Salir");
         jMenu1.add(jMenuItem4);
 
@@ -1671,6 +1801,7 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         jMenu2.setText("Opciones");
 
+        jMenuItem5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icalculo.png"))); // NOI18N
         jMenuItem5.setText("Cálculo de la malla de tierra");
         jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1679,6 +1810,7 @@ public class pantallaInicio extends javax.swing.JFrame {
         });
         jMenu2.add(jMenuItem5);
 
+        jMenu5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/igrafica.png"))); // NOI18N
         jMenu5.setText("Graficas");
 
         jMenuItem6.setText("Tensión de Paso");
@@ -1689,6 +1821,7 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         jMenu2.add(jMenu5);
 
+        jMenuItem8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/ireporte.png"))); // NOI18N
         jMenuItem8.setText("Generar Reporte");
         jMenu2.add(jMenuItem8);
 
@@ -1696,9 +1829,16 @@ public class pantallaInicio extends javax.swing.JFrame {
 
         jMenu4.setText("Ayuda");
 
+        jMenuItem9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/imanual.png"))); // NOI18N
         jMenuItem9.setText("Manual de Usuario");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem9);
 
+        jMenuItem10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/iayuda.png"))); // NOI18N
         jMenuItem10.setText("Acerca de SPT");
         jMenu4.add(jMenuItem10);
 
@@ -1711,26 +1851,30 @@ public class pantallaInicio extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 560, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 8, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -1739,7 +1883,7 @@ public class pantallaInicio extends javax.swing.JFrame {
 
     private void JRBCuadradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBCuadradaActionPerformed
         // TODO add your handling code here:
-        acceso1();
+        acceso();
     }//GEN-LAST:event_JRBCuadradaActionPerformed
 
     private void JTNElectrodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTNElectrodosActionPerformed
@@ -1820,6 +1964,47 @@ public class pantallaInicio extends javax.swing.JFrame {
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         // TODO add your handling code here:
+        permiso = false;
+        jPanel1.removeAll();
+        jPanel1.revalidate();
+        jPanel1.add(jLabel41);
+        jPanel1.repaint();
+        Icon icono;
+        icono = new ImageIcon(getClass().getResource("/img/t1.png"));
+        JLVista.setIcon(icono);
+        jLabel28.setText("--.---");
+        jLabel29.setText("--.---");
+        jLabel30.setText("--.---");
+        buttonGroup1.clearSelection();
+        JTLX.setEditable(false);
+        JTLX.setText("");
+        JTLY.setEditable(false);
+        JTLY.setText("");
+        JTLX2.setText("");
+        JTLX2.setEditable(false);
+        JTLY2.setText("");
+        JTLY2.setEditable(false); 
+        JCTipoConductor.setSelectedItem("Cobre endurecido");
+        JTM.setText("");
+        JTN.setText("");
+        JTProfMalla.setText("");
+        JCDistElec.setSelectedItem("Por toda el area");
+        JCTipoElec.setSelectedItem("Acero 1020");
+        JTNElectrodos.setText("");
+        JTDiamElec.setText("");
+        JTLongElec.setText("");
+        JCMSuperf.setSelectedItem("Concreto");
+        JTPSuperf.setText("");
+        JTRProm.setText("");
+        JCPeso.setSelectedItem("50.0");
+        JTSf.setText("");
+        JTTamb.setText("");
+        JTTc.setText("");
+        JTTf.setText("");
+        JTTs.setText("");
+        JTFrec.setText("");
+        JTIo3.setText("");
+        JTXR.setText("");
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void C3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_C3ActionPerformed
@@ -1890,39 +2075,20 @@ public class pantallaInicio extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_JTPSuperfActionPerformed
 
-    private void JTRSupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTRSupActionPerformed
+    private void JTRPromActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTRPromActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_JTRSupActionPerformed
-
-    private void JTRInfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTRInfActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JTRInfActionPerformed
+        
+    }//GEN-LAST:event_JTRPromActionPerformed
 
     private void JCTipoElecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCTipoElecActionPerformed
         // TODO add your handling code here:
-        Double[] lista = map.get(JCTipoElec.getSelectedItem());
-        C11.setText(lista[0].toString());
-        C22.setText(lista[1].toString());
-        C33.setText(lista[2].toString());
-        C44.setText(lista[3].toString());
-        C55.setText(lista[4].toString());
-        C66.setText(lista[5].toString());
+        Obtener_constantes ();
     }//GEN-LAST:event_JCTipoElecActionPerformed
-
-    private void JCMSupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCMSupActionPerformed
-        // TODO add your handling code here:
-        JTRSup.setText(SelecTerreno(JCMSup));
-    }//GEN-LAST:event_JCMSupActionPerformed
 
     private void JTNElectrodosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTNElectrodosKeyTyped
         // TODO add your handling code here:
         validar_entero(evt);
     }//GEN-LAST:event_JTNElectrodosKeyTyped
-
-    private void JCMInfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCMInfActionPerformed
-        // TODO add your handling code here:
-        JTRInf.setText(SelecTerreno(JCMInf));
-    }//GEN-LAST:event_JCMInfActionPerformed
 
     private void JCMSuperfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCMSuperfActionPerformed
         // TODO add your handling code here:
@@ -1944,14 +2110,12 @@ public class pantallaInicio extends javax.swing.JFrame {
         acceso2();
     }//GEN-LAST:event_JRBFormaTActionPerformed
 
-    private void JTPSupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTPSupActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JTPSupActionPerformed
-
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
         // TODO add your handling code here:
         ConstruirMalla ();
-        
+        if (permiso){
+        DibujarMalla ();
+        }
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void JTDiamElecKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTDiamElecKeyTyped
@@ -2003,11 +2167,6 @@ public class pantallaInicio extends javax.swing.JFrame {
         // TODO add your handling code here:
         validar_decimal(evt);
     }//GEN-LAST:event_JTPSuperfKeyTyped
-
-    private void JTPSupKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTPSupKeyTyped
-        // TODO add your handling code here:
-        validar_decimal(evt);
-    }//GEN-LAST:event_JTPSupKeyTyped
 
     private void JTTambKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTTambKeyTyped
         // TODO add your handling code here:
@@ -2062,10 +2221,64 @@ public class pantallaInicio extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_JTNMouseReleased
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void JCDistElecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCDistElecActionPerformed
         // TODO add your handling code here:
-        DibujarMalla ();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        String arreglo;
+        arreglo = (String) JCDistElec.getSelectedItem();
+            if ("Sin electrodos".equals(arreglo)){
+                JTNElectrodos.setText("0");
+                JTNElectrodos.setEditable(false);
+                JTDiamElec.setText("0");
+                JTDiamElec.setEditable(false);
+                JTLongElec.setText("0");
+                JTLongElec.setEditable(false);
+                JCTipoElec.setVisible(false);
+                JLTipoE.setVisible(false);
+                C11.setText("0");
+                C22.setText("0");
+                C33.setText("0");
+                C44.setText("0");
+                C55.setText("0");
+                C66.setText("0");
+            }else{
+                JTNElectrodos.setEditable(true);
+                JTDiamElec.setEditable(true);
+                JTLongElec.setEditable(true);
+                JCTipoElec.setVisible(true);
+                JLTipoE.setVisible(true);
+                Obtener_constantes ();
+            }
+    }//GEN-LAST:event_JCDistElecActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void JTLXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTLXActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JTLXActionPerformed
+
+    private void JTRPromKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTRPromKeyTyped
+        // TODO add your handling code here:
+        validar_decimal(evt);
+    }//GEN-LAST:event_JTRPromKeyTyped
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+         //TODO add your handling code here:
+        if (permiso){
+        String path = "malla.json";
+                try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(mallaN);
+                out.write(jsonString);
+                } catch (Exception e) {
+                e.printStackTrace();
+                }
+        }else{
+        JOptionPane.showMessageDialog(this, "Primero debe generar la mmala presionando ACEPTAR",
+                                              "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2105,20 +2318,7 @@ public class pantallaInicio extends javax.swing.JFrame {
     }
     public HashMap<String, Double[]> map = new HashMap<>();
     
-    public static String SelecTerreno (javax.swing.JComboBox JCTerreno){
-    String terreno = (String)JCTerreno.getSelectedItem();
-    String a = "";
-        switch (terreno) {
-            case "Suelo organico húmedo" -> a="10.0";
-            case "Suelo húmedo" -> a="100.0";
-            case "Suelo seco" -> a="1000.0";
-            case "Bedrock" -> a="10000.0";
-            default -> {
-            }
-        }
-        return a;
-        //entrega el valor de las capas superior e inferior
-    }
+    
         public static String SelecTerrenoSup (javax.swing.JComboBox JCTerrenoS){
     String terreno = (String)JCTerrenoS.getSelectedItem();
     String a = "";
@@ -2137,9 +2337,19 @@ public class pantallaInicio extends javax.swing.JFrame {
         return a;
         //devuelve el valor de resistencia de la capa supercifial
     }
+        public void acceso (){
+            JTLX.setEditable(true);
+            JTLY.setEditable(false);
+            JTLY.setText("0");
+            JTLX2.setText("0");
+            JTLX2.setEditable(false);
+            JTLY2.setText("0");
+            JTLY2.setEditable(false);    
+        }//habilita el ingreso de las medidas en funcion de la forma del terreno
         public void acceso1 (){
             JTLX.setEditable(true);
             JTLY.setEditable(true);
+            JTLY.setText("");
             JTLX2.setText("0");
             JTLX2.setEditable(false);
             JTLY2.setText("0");
@@ -2148,6 +2358,7 @@ public class pantallaInicio extends javax.swing.JFrame {
         public void acceso2 (){
             JTLX.setEditable(true);
             JTLY.setEditable(true);
+            JTLY.setText("");
             JTLX2.setText("");
             JTLX2.setEditable(true);
             JTLY2.setText("");
@@ -2169,6 +2380,15 @@ public class pantallaInicio extends javax.swing.JFrame {
             }
             if(b==0){evt.consume();}
         }//Valida entrada numerica decimal
+        public void Obtener_constantes (){
+        Double[] lista = map.get(JCTipoElec.getSelectedItem());
+        C11.setText(lista[0].toString());
+        C22.setText(lista[1].toString());
+        C33.setText(lista[2].toString());
+        C44.setText(lista[3].toString());
+        C55.setText(lista[4].toString());
+        C66.setText(lista[5].toString());
+        }
         
         public class Dimensiones{
             public String Forma;
@@ -2243,22 +2463,14 @@ public class pantallaInicio extends javax.swing.JFrame {
         public double RSuperf;
         public String MSuperf;
         public double PSuperf;
-        public double RSup;
-        public String MSup;
-        public double PSup;
-        public double RInf;
-        public String MInf;
+        public double RProm;
+        
    
-            public Terreno (double rSuperf, String mSuperf, double pSuperf, double rSup, String mSup, double pSup,
-                            double rInf, String mInf){
+            public Terreno (double rSuperf, String mSuperf, double pSuperf, double rProm){
                 this.RSuperf = rSuperf;
                 this.MSuperf = mSuperf;
                 this.PSuperf = pSuperf;
-                this.RSup = rSup;
-                this.MSup = mSup;
-                this.PSup = pSup;
-                this.RInf = rInf;
-                this.MInf = mInf;
+                this.RProm = rProm;
             }
         }
         
@@ -2288,43 +2500,103 @@ public class pantallaInicio extends javax.swing.JFrame {
                 this.XR = xR;
             }
         }
+        
+        public class Malla {
+        public Dimensiones MallaDim;
+        public Conductores MallaCon;
+        public Electrodos MallaEle;
+        public Terreno MallaTer;
+        public CEstudio MallaCEs;
+        
+            public Malla(Dimensiones MallaDim, Conductores MallaCon, Electrodos MallaEle, Terreno MallaTer, CEstudio MallaCEs){
+                this.MallaDim = MallaDim;
+                this.MallaCon = MallaCon;
+                this.MallaEle = MallaEle;
+                this.MallaTer = MallaTer;
+                this.MallaCEs = MallaCEs;
+            }
+        }
         //variables de calculo
-        public double D, ResistP, CsP;
+        public double D, Dx, Dy, ResistP, CsP;
         public double EtP = 0.0, EpP = 0.0;
         public double Lt, A, Rg, Ta, Df, Ig, GPR, LC, LR, LM,LP, na, nb, nc, nd, n, Dm1, Dm2, Dm, Ki, Kii, Kh;
         public double If, Akcmil, dc, Km, Em, Ls, Ks, Es;
         public String calibre, Mpaso, Mtoque;
-                
+        resultados result = new resultados();
+        //Variables de dibujo
+        public String formaM, ArregloElec;
+        public double Lx, Ly, Lx2, Ly2;
+        public int ElecDisp, ElecPerm;
+        public int Cx, Cy;
+        public boolean permiso;
+        public Malla mallaN;
+        
         public void ConstruirMalla (){
+            result.setVisible(false);
+            String fmalla = "";
+                for (Enumeration<AbstractButton> buttons = buttonGroup1.getElements(); buttons.hasMoreElements();) {
+                    AbstractButton button = buttons.nextElement();
+                    if (button.isSelected()) {
+                        fmalla = button.getText();
+                        formaM = fmalla;
+                    }
+                }
             if (JTLX.getText().length()==0||JTLY.getText().length()==0||JTLX2.getText().length()==0||JTLY2.getText().length()==0
                 ||JTProfMalla.getText().length()==0||JTN.getText().length()==0||JTM.getText().length()==0
                 ||JTNElectrodos.getText().length()==0|JTDiamElec.getText().length()==0||JTLongElec.getText().length()==0
-                ||JTPSuperf.getText().length()==0||JTPSup.getText().length()==0||JTTamb.getText().length()==0
+                ||JTPSuperf.getText().length()==0||JTTamb.getText().length()==0
                 ||JTFrec.getText().length()==0||JTSf.getText().length()==0||JTCp.getText().length()==0
                 ||JTTf.getText().length()==0||JTTc.getText().length()==0||JTTs.getText().length()==0||JTIo3.getText().length()==0
                 ||JTXR.getText().length()==0){
                 getToolkit().beep();
                 JOptionPane.showMessageDialog(this, "Debe llenar todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
-             }else if (Double.parseDouble(JTLX.getText())<=Double.parseDouble(JTLX2.getText())||
-                       Double.parseDouble(JTLY.getText())<=Double.parseDouble(JTLY2.getText())){
+                permiso = false;
+             }else if (!"Cuadrada".equals(fmalla)&&(Double.parseDouble(JTLX.getText())<=Double.parseDouble(JTLX2.getText())||
+                       Double.parseDouble(JTLY.getText())<=Double.parseDouble(JTLY2.getText()))){
                 JOptionPane.showMessageDialog(this, "Las dimensiones secundarias no pueden ser mayores o iguales a las principales",
                                               "Error", JOptionPane.ERROR_MESSAGE); 
-             }else{   
-                String a="";
-                for (Enumeration<AbstractButton> buttons = buttonGroup1.getElements(); buttons.hasMoreElements();) {
-                    AbstractButton button = buttons.nextElement();
-                    if (button.isSelected()) {
-                        a = button.getText();
-                        if ("Cuadrada".equals(a)){
-                            JTLY.setText(JTLX.getText());
+                permiso = false;
+             }else if("Rectangular".equals(fmalla)&&(Double.parseDouble(JTLX.getText())<=Double.parseDouble(JTLY.getText()))){
+                 JOptionPane.showMessageDialog(this, "Para las mallas rectangulares la longitud LX debe ser mayor que la longitud LY",
+                                              "Error", JOptionPane.ERROR_MESSAGE); 
+                 permiso = false;
+             }else if("Forma T".equals(fmalla)&&(Double.parseDouble(JTLX.getText())<=(2*Double.parseDouble(JTLX2.getText())))){
+                 JOptionPane.showMessageDialog(this, "Para las mallas con forma T la longitud LX debe ser mayor que el doble de la longitud LX2",
+                                              "Error", JOptionPane.ERROR_MESSAGE);
+                 permiso = false;
+             }else{       
+                permiso = true;
+                if ("Cuadrada".equals(fmalla)){
+                    JTLY.setText(JTLX.getText());
+                }
+                
+                if (null==fmalla) { //Cantidad minima de contuctores
+                } else {
+                    switch (fmalla) {
+                        case "Cuadrada", "Rectangular" -> {
+                            if (Integer.parseInt(JTN.getText())<2){
+                                JTN.setText("2");
+                            }   if (Integer.parseInt(JTM.getText())<2){
+                                JTM.setText("2");
+                            }
+                        }
+                        case "Forma L" -> {
+                            if (Integer.parseInt(JTN.getText())<3){
+                                JTN.setText("3");
+                            }   if (Integer.parseInt(JTM.getText())<3){
+                                JTM.setText("3");
+                            }
+                        }
+                        case "Forma T" -> {
+                            if (Integer.parseInt(JTN.getText())<3){
+                                JTN.setText("3");
+                            }   if (Integer.parseInt(JTM.getText())<4){
+                                JTM.setText("4");
+                            }
+                        }
+                        default -> {
                         }
                     }
-                }
-                if (Integer.parseInt(JTN.getText())<2){
-                    JTN.setText("2");
-                }
-                if (Integer.parseInt(JTM.getText())<2){
-                    JTM.setText("2");
                 }
                 if (Double.parseDouble(JTProfMalla.getText())<0.5){
                     JOptionPane.showMessageDialog(this, "Se recomienda una profundidad mayor a 0.5m",
@@ -2335,14 +2607,74 @@ public class pantallaInicio extends javax.swing.JFrame {
                 }
                 if (Double.parseDouble(JTPSuperf.getText())<0.1){
                     JOptionPane.showMessageDialog(this, "Se recomienda una profundidad mayor a 0.1m",
-                                                  "Ajustar profundidad de terreno superficial", JOptionPane.WARNING_MESSAGE);
+                                                  "Ajustar profundidad de la capa superficial", JOptionPane.WARNING_MESSAGE);
                 } else if (Double.parseDouble(JTPSuperf.getText())>0.15){
                     JOptionPane.showMessageDialog(this, "Se recomienda una profundidad menor a 0.15m",
-                                                  "Ajustar profundidad de terreno superficial", JOptionPane.WARNING_MESSAGE);
+                                                  "Ajustar profundidad de la capa superficial", JOptionPane.WARNING_MESSAGE);
                 }
-                
-                
-                Dimensiones dimN = new Dimensiones(a, Double.parseDouble(JTLX.getText()), Double.parseDouble(JTLX2.getText()),
+                //ajuste de dimensiones secundarias
+                Cx = Integer.parseInt(JTN.getText());
+                Cy = Integer.parseInt(JTM.getText());
+                if ("Forma T".equals(fmalla)||"Forma L".equals(fmalla)){
+                    Dx= Double.parseDouble(JTLX.getText())/(Cy-1);
+                    Dy= Double.parseDouble(JTLY.getText())/(Cx-1);
+                    Lx2=Math.rint(((Math.round(Double.parseDouble(JTLX2.getText())/Dx))*Dx)*100)/100;
+                    Ly2=Math.rint(((Math.round(Double.parseDouble(JTLY2.getText())/Dy))*Dy)*100)/100;
+                    if (Lx2<Dx){
+                       Lx2=Math.rint(Dx*100)/100;
+                    }
+                    if (Ly2<Dy){
+                       Ly2=Math.rint(Dy*100)/100;
+                    }
+                    JTLX2.setText(""+Lx2);
+                    JTLY2.setText(""+Ly2);
+                }
+                //Electrodos disponibles segun la configuracion
+                ElecDisp = Integer.parseInt(JTNElectrodos.getText());
+                ArregloElec = JCDistElec.getSelectedItem().toString();
+                if (null!=fmalla)switch (fmalla) {
+                    case "Cuadrada", "Rectangular" -> {
+                        if (null == ArregloElec){
+                            ElecPerm = 0;
+                        } else ElecPerm = switch (ArregloElec) {
+                            case "Por toda el area" -> Cx*Cy;
+                            case "Por el perimetro" -> (2*Cx)+(2*Cy)-4;
+                            case "En el interior" -> (Cx-2)*(Cy-2);
+                            case "Agrupados en las esquinas" -> 4;
+                            default -> 0;
+                        };
+                    }
+                    case "Forma L" -> {
+                        if (null == ArregloElec){
+                            ElecPerm = 0;
+                        } else ElecPerm = switch (ArregloElec) {
+                            case "Por toda el area" -> (Cx*Cy)-(int)((Ly2/Dy)*(Lx2/Dx));
+                            case "Por el perimetro" -> (2*Cx)+(2*Cy)-4;
+                            case "En el interior" -> (Cx*Cy)-((int)((Ly2/Dy)*(Lx2/Dx)))-((2*Cx)+(2*Cy)-4);
+                            case "Agrupados en las esquinas" -> 6;
+                            default -> 0;
+                        };
+                    }
+                    case "Forma T" -> {
+                        if (null == ArregloElec){
+                            ElecPerm = 0;
+                        } else ElecPerm = switch (ArregloElec) {
+                            case "Por toda el area" -> (Cx*Cy)-(2*((int)((Ly2/Dy)*(Lx2/Dx))));
+                            case "Por el perimetro" -> (2*Cx)+(2*Cy)-4;
+                            case "En el interior" -> (Cx*Cy)-(2*((int)((Ly2/Dy)*(Lx2/Dx))))-((2*Cx)+(2*Cy)-4);
+                            case "Agrupados en las esquinas" -> 8;
+                            default -> 0;
+                        };
+                    }
+                    default -> {
+                    }
+                }
+                if (ElecDisp>ElecPerm||"Agrupados en las esquinas".equals(ArregloElec)){
+                        ElecDisp = ElecPerm;
+                        JTNElectrodos.setText(ElecDisp+"");
+                }
+                //Toma de datos de la malla
+                Dimensiones dimN = new Dimensiones(fmalla, Double.parseDouble(JTLX.getText()), Double.parseDouble(JTLX2.getText()),
                                                     Double.parseDouble(JTLY.getText()), Double.parseDouble(JTLY2.getText()));
                 CteMateriales matCondN = new CteMateriales(Double.parseDouble(C1.getText()), Double.parseDouble(C2.getText()),
                                                           Double.parseDouble(C3.getText()), Double.parseDouble(C4.getText()),
@@ -2357,18 +2689,38 @@ public class pantallaInicio extends javax.swing.JFrame {
                                                    Double.parseDouble(JTLongElec.getText()), JCTipoElec.getSelectedItem().toString(),
                                                    JCDistElec.getSelectedItem().toString(),matElecN);
                 Terreno terN = new Terreno (Double.parseDouble(JTRSuperf.getText()), JCMSuperf.getSelectedItem().toString(),
-                                            Double.parseDouble(JTPSuperf.getText()), Double.parseDouble(JTRSup.getText()),
-                                            JCMSup.getSelectedItem().toString(), Double.parseDouble(JTPSup.getText()),
-                                            Double.parseDouble(JTRInf.getText()),  JCMInf.getSelectedItem().toString());
+                                            Double.parseDouble(JTPSuperf.getText()), Double.parseDouble(JTRProm.getText()));
                 CEstudio cEstN = new CEstudio(Double.parseDouble(JCPeso.getSelectedItem().toString()),
                                               Double.parseDouble(JTTamb.getText()), Double.parseDouble(JTFrec.getText()),
                                               Double.parseDouble(JTSf.getText()), Double.parseDouble(JTCp.getText()), 
                                               Double.parseDouble(JTTf.getText()), Double.parseDouble(JTTc.getText()),
                                               Double.parseDouble(JTTs.getText()), Double.parseDouble(JTIo3.getText()), 
                                               Double.parseDouble(JTXR.getText()));
-
+                mallaN = new Malla (dimN, condN, elecN, terN, cEstN);
+//                String path = "malla.json";
+//                try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
+//                Gson gson = new Gson();
+//                String jsonString = gson.toJson(mallaN);
+//                out.write(jsonString);
+//                } catch (Exception e) {
+//                e.printStackTrace();
+//                }
+                Lx = dimN.LX;
+                Ly = dimN.LY;
+                Lx2 = dimN.LX2;
+                Ly2 = dimN.LY2;
+                Icon icono;
+                if ("Sin electrodos".equals(elecN.DistElec)){
+                    icono = new ImageIcon(getClass().getResource("/img/t2.png"));
+                }else{
+                    icono = new ImageIcon(getClass().getResource("/img/t3.png"));
+                }
+                JLVista.setIcon(icono);
                 //Calculos de parametros
-                D = ((dimN.LX/(condN.M-1))+(dimN.LY/(condN.N-1)))/2.0;
+                Dx = dimN.LX/(condN.M-1);
+                Dy = dimN.LY/(condN.N-1);
+                D = (Dx+Dy)/2.0;
+                 
                 if (D<3.0){
                 JOptionPane.showMessageDialog(this, "Se recomienda aumentar el distanciamiento entre conductores a más de 3m",
                                               "Ajustar distanciamiento entre conductores", JOptionPane.WARNING_MESSAGE);
@@ -2377,8 +2729,7 @@ public class pantallaInicio extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Se recomienda disminuir el distanciamiento entre conductores a menos de 15m",
                                               "Ajustar distanciamiento entre conductores", JOptionPane.WARNING_MESSAGE);
                 }
-                ResistP = (terN.RSup*terN.RInf*elecN.LongElec)/((terN.RInf*(terN.PSup-condN.ProfMalla))+
-                          (terN.RSup*(elecN.LongElec+condN.ProfMalla-terN.PSup)));//da error si las capas son iguales 0/0
+                ResistP = terN.RProm;
                 CsP = 1-(0.09*(1-ResistP/terN.RSuperf))/(2*terN.PSuperf+0.09);
                 if (cEstN.Peso==50.0){
                     EpP = (1000+6.0*CsP*terN.RSuperf)*(0.116/(Math.sqrt(cEstN.Ts)));
@@ -2387,7 +2738,61 @@ public class pantallaInicio extends javax.swing.JFrame {
                     EpP = (1000+6.0*CsP*terN.RSuperf)*(0.157/(Math.sqrt(cEstN.Ts)));
                     EtP = (1000+1.5*CsP*terN.RSuperf)*(0.157/(Math.sqrt(cEstN.Ts)));
                 }
-                Lt= condN.N*dimN.LX + condN.M*dimN.LY + elecN.NElectrodos*elecN.LongElec;
+                //calculo de LC
+                if ("Forma L".equals(dimN.Forma)||"Forma T".equals(dimN.Forma)){
+                    double LadoX = 0;
+                    double LadoY = 0;
+                    double espacio1 = 0;
+                    double espacio2 = 0;
+                    double LX3;
+                    double LY3;
+                    //calculo de longitud de conductor para forma L
+                    if ("Forma L".equals(dimN.Forma)){
+                    LX3 = dimN.LX-dimN.LX2;
+                    LY3 = dimN.LY-dimN.LY2;
+                        while (espacio1 <= dimN.LY) {
+                            if (espacio1 <= LY3){ 
+                            LadoX = LadoX + dimN.LX;
+                            }else{
+                            LadoX = LadoX + LX3;
+                            }
+                            espacio1 = espacio1 + Dy;
+                        }
+                        while (espacio2 <= dimN.LX) {
+                            if (espacio2 <= LX3){ 
+                            LadoY = LadoY + dimN.LY;
+                            }else{
+                            LadoY = LadoY + LY3;
+                            }
+                            espacio2 = espacio2 + Dx;
+                        }
+                    }else{
+                    //calculo de longitud de conductor fotma T
+                    LX3 = dimN.LX-(2*dimN.LX2);
+                    LY3 = dimN.LY-dimN.LY2;
+                        while (espacio1 <= dimN.LY) {
+                            if (espacio1<=LY3){
+                            LadoX = LadoX + dimN.LX;
+                            }else{
+                            LadoX = LadoX + LX3;
+                            }
+                            espacio1 = espacio1 + Dy;
+                        }
+                        while (espacio2 <= dimN.LX){
+                            if (espacio2 >= dimN.LX2 && espacio2 <= (dimN.LX2+LX3)){
+                            LadoY = LadoY + dimN.LY;
+                            }else{
+                            LadoY = LadoY + LY3;
+                            }
+                            espacio2 = espacio2 + Dx;
+                        }
+                    }
+                    LC = LadoX+LadoY;
+                }else{
+                    LC = condN.N*dimN.LX+condN.M*dimN.LY;
+                }
+                LR = elecN.NElectrodos*elecN.LongElec;
+                Lt= LC + LR;
                 //Calculo de area
                 if (!"Forma T".equals(dimN.Forma)){
                 A = (dimN.LX*dimN.LY)-(dimN.LX2*dimN.LY2);
@@ -2404,8 +2809,6 @@ public class pantallaInicio extends javax.swing.JFrame {
                 }else{
                     System.out.println("Calcular tensiones reales");
                 }
-                LC = condN.N*dimN.LX+condN.M*dimN.LY;
-                LR = elecN.NElectrodos*elecN.LongElec;
                 if ("En el interior".equals(elecN.DistElec)||"Sin electrodos".equals(elecN.DistElec)){
                     LM = LC+LR;
                 }else{
@@ -2473,13 +2876,23 @@ public class pantallaInicio extends javax.swing.JFrame {
                 Ls = (0.75*LC)+(0.85*elecN.NElectrodos*elecN.LongElec);
                 Ks = (1.0/Math.PI)*((1.0/(2.0*condN.ProfMalla))+(1.0/(D+condN.ProfMalla))+((1.0/D)*(1-Math.pow(0.5, n-2))));
                 Es = (ResistP*Ks*Ki*Ig)/Ls;
+                jLabel28.setText(Double.toString((terN.PSuperf*100.0)/100.0));
+                jLabel29.setText("-"+Double.toString((condN.ProfMalla*100.0)/100.0));
+                if ("Sin electrodos".equals(elecN.DistElec)){
+                jLabel30.setText("");
+                }else{
+                jLabel30.setText("-"+Double.toString(((condN.ProfMalla+elecN.LongElec)*100.0)/100.0));
+                }
+                System.out.println("tipo "+formaM);
                 System.out.println("Distanciamiento cond: "+D);
                 System.out.println(ResistP);
                 System.out.println(terN.RSuperf);
                 System.out.println(terN.PSuperf);
-                System.out.println(CsP);
+                System.out.println("Cs: "+CsP);
                 System.out.println("Tension de paso peritida: "+EpP);
                 System.out.println("Tension de toque permitida: "+EtP);
+                System.out.println("Lc: "+LC);
+                System.out.println("Lr: "+LR);
                 System.out.println("Lt: "+Lt);
                 System.out.println("A: "+A);
                 System.out.println("Rg: "+Rg);
@@ -2512,7 +2925,7 @@ public class pantallaInicio extends javax.swing.JFrame {
                     System.out.println("La tension de paso no supera el limite máximo");
                     Mpaso="La tension de paso no supera el limite máximo";
                 }
-                new resultados().setVisible(true);
+                result.setVisible(true);
                 Em=Math.rint(Em*1000)/1000;
                 resultados.JTEm.setText(""+Em);
                 Es=Math.rint(Es*1000)/1000;
@@ -2527,19 +2940,18 @@ public class pantallaInicio extends javax.swing.JFrame {
                 resultados.JTRg.setText(""+Rg);
                 resultados.JLpaso.setText(Mpaso);
                 resultados.JLtoque.setText(Mtoque);
-                
         } 
         }
         
-        public void DibujarMalla (){
+        public void DibujarMalla (){      
             jPanel1.removeAll();
             jPanel1.revalidate();
-            GridsCanvas Mallado = new GridsCanvas (jPanel1.getWidth()-1, jPanel1.getHeight()-1, 
-                    Integer.parseInt(JTN.getText())-1, Integer.parseInt(JTM.getText())-1);
-//            jPanel1.setLayout(null);
+            GridsCanvas Mallado = new GridsCanvas (formaM, jPanel1.getWidth()-1, jPanel1.getHeight()-1, 
+                    Integer.parseInt(JTN.getText())-1, Integer.parseInt(JTM.getText())-1, Lx, Ly, Lx2, Ly2, ArregloElec);
             jPanel1.add(Mallado);
             jPanel1.repaint();
         }
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField C1;
     private javax.swing.JTextField C11;
@@ -2554,12 +2966,17 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JTextField C6;
     private javax.swing.JTextField C66;
     private javax.swing.JComboBox<String> JCDistElec;
-    private javax.swing.JComboBox<String> JCMInf;
-    private javax.swing.JComboBox<String> JCMSup;
     private javax.swing.JComboBox<String> JCMSuperf;
     private javax.swing.JComboBox<String> JCPeso;
     private javax.swing.JComboBox<String> JCTipoConductor;
     private javax.swing.JComboBox<String> JCTipoElec;
+    private javax.swing.JLabel JLDiamElec;
+    private javax.swing.JLabel JLDiamElec2;
+    private javax.swing.JLabel JLLongElec;
+    private javax.swing.JLabel JLLongElec2;
+    private javax.swing.JLabel JLNElectrodos;
+    private javax.swing.JLabel JLTipoE;
+    public javax.swing.JLabel JLVista;
     private javax.swing.JRadioButton JRBCuadrada;
     private javax.swing.JRadioButton JRBFormaL;
     private javax.swing.JRadioButton JRBFormaT;
@@ -2576,11 +2993,9 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JTextField JTM;
     private javax.swing.JTextField JTN;
     private javax.swing.JTextField JTNElectrodos;
-    private javax.swing.JTextField JTPSup;
     private javax.swing.JTextField JTPSuperf;
     private javax.swing.JTextField JTProfMalla;
-    private javax.swing.JTextField JTRInf;
-    private javax.swing.JTextField JTRSup;
+    private javax.swing.JTextField JTRProm;
     private javax.swing.JTextField JTRSuperf;
     private javax.swing.JTextField JTSf;
     private javax.swing.JTextField JTTamb;
@@ -2589,7 +3004,6 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JTextField JTTs;
     private javax.swing.JTextField JTXR;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
     private javax.swing.JLabel jLabel1;
@@ -2618,7 +3032,6 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
-    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
@@ -2628,9 +3041,7 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
-    private javax.swing.JLabel jLabel42;
     private javax.swing.JLabel jLabel43;
-    private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
@@ -2669,6 +3080,8 @@ public class pantallaInicio extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel77;
     private javax.swing.JLabel jLabel78;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel80;
+    private javax.swing.JLabel jLabel81;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
